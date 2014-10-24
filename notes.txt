@@ -1,0 +1,26 @@
+
+ole_e_res_rec_t
+
+
+ole_ds_bib_t
+
++---------------------+-------------+------+-----+---------+-------+
+| Field               | Type        | Null | Key | Default | Extra |
++---------------------+-------------+------+-----+---------+-------+
+| BIB_ID              | int(11)     | NO   | PRI | 0       |       |
+| FORMER_ID           | varchar(45) | YES  |     | NULL    |       |
+| FAST_ADD            | char(1)     | YES  |     | NULL    |       |
+| STAFF_ONLY          | char(1)     | YES  |     | NULL    |       |
+| CREATED_BY          | varchar(40) | YES  |     | NULL    |       |
+| DATE_CREATED        | datetime    | YES  |     | NULL    |       |
+| UPDATED_BY          | varchar(40) | YES  |     | NULL    |       |
+| DATE_UPDATED        | datetime    | YES  |     | NULL    |       |
+| STATUS              | varchar(20) | YES  |     | NULL    |       |
+| STATUS_UPDATED_BY   | varchar(40) | YES  |     | NULL    |       |
+| STATUS_UPDATED_DATE | datetime    | YES  |     | NULL    |       |
+| UNIQUE_ID_PREFIX    | varchar(10) | YES  |     | NULL    |       |
+| CONTENT             | longtext    | YES  |     | NULL    |       |
++---------------------+-------------+------+-----+---------+-------+
+
+grails create-domain-class OleBibliographicRecord
+
