@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function() {
   var app = angular.module('GOKb',[ 'ui.bootstrap', 
                                     'ui.grid', 
@@ -8,7 +7,7 @@
                                     'ui.grid.infiniteScroll'
                                     ]);
 
-  app.controller('GOKbCtrl', ['$scope', '$http', '$log', function($scope,$http,$log) {
+  app.controller('GOKbCtrl', ['$scope', '$http', '$log', 'gokbService', function($scope,$http,$log,gokbService) {
 
     $scope.gridOptions = {};
     // $scope.gridOptions.infiniteScrollPercentage = 20;
@@ -30,6 +29,7 @@
 
     var getData = function(page) {
       var page_of_data = []
+      gokbService.getPackages();
       for (var i = 0; i < 10; ++i) {
         page_of_data.push({'name':'Test Package['+pageno+'] '+i});
       }
@@ -59,6 +59,19 @@
     };
  
   }]);
+
+  app.factory('gokbService', ['$http', '$log', function($http, $log) {
+    var urlBase = 'https://gokb.kuali.org';
+    var dataFactory = {};
+
+    dataFactory.getPackages = function () {
+      $log.debug("getPackages");
+      return $http.get(urlBase+'/gokb/search/index?qbe=g%3Apackages&qp_name=%25&qp_showDeleted=on&format=json');
+    };
+
+    return dataFactory;
+  }]);
+
 
 })();
 
