@@ -2,14 +2,20 @@
 
 
 (function() {
-  var app = angular.module('GOKb',[ 'ngRoute', 'myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers', 'ui.bootstrap', 'ui.grid']);
+  var app = angular.module('GOKb',[ 'ui.bootstrap', 
+                                    'ui.grid', 
+                                    // 'ui.grid.pagination',
+                                    'ui.grid.infiniteScroll'
+                                    ]);
 
-  app.controller('GOKbCtrl', function($scope,$http) {
+  app.controller('GOKbCtrl', ['$scope', '$http', '$log', function($scope,$http,$log) {
 
-    $scope.gridOptions = {  };
+    $scope.gridOptions = {};
+    // $scope.gridOptions.infiniteScrollPercentage = 20;
+    // $scope.gridOptions.infiniteScroll = 20;
  
     $scope.gridOptions.columnDefs = [
-      {name:'Package Name'},
+      {name:'Package Name', field:'name'},
       {name:'GOKb Status'},
       {name:'OLE Status'},
       {name:'Primary Platform'},
@@ -18,27 +24,41 @@
       {name:'Date Created'},
       {name:'Date Updated'}
     ];
+
+    var pageno=1;
+    var total = 1000;
+
+    var getData = function(page) {
+      var page_of_data = []
+      for (var i = 0; i < 10; ++i) {
+        page_of_data.push({'name':'Test Package '+i});
+      }
+      return page_of_data;
+    };
+
+    $scope.gridOptions.data = getData(pageno);
+
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+      $scope.gridApi = gridApi;
+
+     gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
+        $scope.gridOptions.data = getData(page);
+        ++page;
+        gridApi.infiniteScroll.dataLoaded();
+
+        // $http.get('/data/10000_complex.json')
+        //   .success(function(data) {
+        //     $scope.gridOptions.data = getData(data, page);
+        //     ++page;
+        //     gridApi.infiniteScroll.dataLoaded();
+        //   })
+        //   .error(function() {
+        //     gridApi.infiniteScroll.dataLoaded();
+        //   });
+      });
+    };
  
-    // $http.get('/data/10000_complex.json')
-    // .success(function(data) {
-    //   $scope.gridOptions.data = data;
-    // });
-
-    $scope.gridOptions.data = [
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' },
-      { 'name' : 'testPackage' }
-    ];
-
-
-
-
-  });
+  }]);
 
 })();
 
