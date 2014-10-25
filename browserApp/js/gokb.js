@@ -25,13 +25,13 @@
       {name:'Date Updated'}
     ];
 
-    var pageno=1;
+    var pageno=0;
     var total = 1000;
 
     var getData = function(page) {
       var page_of_data = []
       for (var i = 0; i < 10; ++i) {
-        page_of_data.push({'name':'Test Package '+i});
+        page_of_data.push({'name':'Test Package['+pageno+'] '+i});
       }
       return page_of_data;
     };
@@ -42,8 +42,8 @@
       $scope.gridApi = gridApi;
 
      gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
-        $scope.gridOptions.data = getData(page);
-        ++page;
+        $scope.gridOptions.data = getData(pageno);
+        ++pageno;
         gridApi.infiniteScroll.dataLoaded();
 
         // $http.get('/data/10000_complex.json')
