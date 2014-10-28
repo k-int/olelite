@@ -5,6 +5,7 @@
                                     'ui.grid', 
                                     // 'ui.grid.pagination',
                                     'ui.grid.infiniteScroll',
+                                    'ui.grid.resizeColumns'
                                     ]);
 
   app.run(function($http) {
@@ -18,14 +19,14 @@
     // $scope.gridOptions.infiniteScroll = 20;
  
     $scope.gridOptions.columnDefs = [
-      {name:'Package Name', field:'name'},
-      {name:'GOKb Status', field:'status'},
-      {name:'OLE Status'},
-      {name:'Primary Platform', field:'nominalPlatform'},
-      {name:'Primary Platform Provider', field:'provider'},
-      {name:'# TIPPS', field:'numTipps'},
-      {name:'Date Created', field:'dateCreated'},
-      {name:'Date Updated', field:'lastUpdated'}
+      {name:'Package Name', field:'name',enableColumnResizing: true },
+      {name:'Global Status', field:'status',enableColumnResizing: true },
+      {name:'Local Status',enableColumnResizing: true },
+      {name:'Primary Platform', field:'nominalPlatform',enableColumnResizing: true },
+      {name:'Primary Platform Provider', field:'provider',enableColumnResizing: true },
+      {name:'# Titles', field:'numTipps',enableColumnResizing: true },
+      {name:'Date Created', field:'dateCreated',enableColumnResizing: true },
+      {name:'Date Updated', field:'lastUpdated',enableColumnResizing: true }
     ];
 
     var pageno=0;
