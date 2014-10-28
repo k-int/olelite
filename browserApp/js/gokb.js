@@ -57,16 +57,6 @@
         gokbService.getPackages($scope.gridOptions.data);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
-
-        // $http.get('/data/10000_complex.json')
-        //   .success(function(data) {
-        //     $scope.gridOptions.data = getData(data, page);
-        //     ++page;
-        //     gridApi.infiniteScroll.dataLoaded();
-        //   })
-        //   .error(function() {
-        //     gridApi.infiniteScroll.dataLoaded();
-        //   });
       });
     };
  
@@ -77,7 +67,7 @@
     var dataFactory = {};
     
     dataFactory.getPackages = function (tgt) {
-      $log.debug("getPackages");
+      $log.debug("getPackages ");
 
       // This is the config for the search
       var qconfig = {
