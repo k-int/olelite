@@ -19,7 +19,7 @@
  
     $scope.gridOptions.columnDefs = [
       {name:'Package Name', field:'name'},
-      {name:'GOKb Status'},
+      {name:'GOKb Status', field:'status'},
       {name:'OLE Status'},
       {name:'Primary Platform'},
       {name:'Primary Platform Provider'},
@@ -33,9 +33,9 @@
 
     var getData = function(page) {
       var page_of_data = []
-      $log.debug("Calling get packages...");
-      var result = gokbService.getPackages();
-      $log.debug("result of getPackages %o",result);
+      // $log.debug("Calling get packages...");
+      // var result = gokbService.getPackages();
+      // $log.debug("result of getPackages %o",result);
   
       for (var i = 0; i < 10; ++i) {
         page_of_data.push({'name':'Test Package['+pageno+'] '+i});
@@ -43,13 +43,18 @@
       return page_of_data;
     };
 
-    $scope.gridOptions.data = getData(pageno);
+    $scope.gridOptions.data = [];
+    gokbService.getPackages($scope.gridOptions.data)
+    // $scope.gridOptions.data = getData(0);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
 
-     gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
-        $scope.gridOptions.data = getData(pageno);
+      gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
+
+        $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
+
+        gokbService.getPackages($scope.gridOptions.data);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
 
@@ -70,9 +75,8 @@
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
     var urlBase = 'http://localhost:8080/gokb/api';
     var dataFactory = {};
-
     
-    dataFactory.getPackages = function () {
+    dataFactory.getPackages = function (tgt) {
       $log.debug("getPackages");
 
       // This is the config for the search
@@ -104,6 +108,10 @@
       $http.post(urlBase+'/search', {cfg:qconfig}).
         success(function(data,status,headers,config) {
           $log.debug("OK:: data %o",data);
+          for (var i = 0; i < data.rows.length; i++) {
+            $log.debug("Adding row %d : %o", i, data.rows[i]);
+            tgt.push(data.rows[i]);
+          }
         }).
         error(function(data,status,headers,config) {
           $log.debug("Error");
