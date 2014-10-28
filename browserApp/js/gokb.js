@@ -71,10 +71,46 @@
     var urlBase = 'http://localhost:8080/gokb/api';
     var dataFactory = {};
 
+    
     dataFactory.getPackages = function () {
-      $log.info("getPackages");
       $log.debug("getPackages");
-      return $http.get(urlBase+'/search?qbe=g%3A1packages');
+
+      // This is the config for the search
+      var qconfig = {
+        baseclass:'org.gokb.cred.Package',
+        defaultSort:'name',
+        defaultOrder:'asc',
+        qbeConfig:{
+          qbeForm:[
+            {
+              prompt:'Name of Package',
+              qparam:'qp_name',
+              placeholder:'Package Name',
+              contextTree:{'ctxtp':'qry', 'comparator' : 'ilike', 'prop':'normname', 'wildcard':'B', normalise:true}
+            }
+          ],
+          qbeGlobals:[
+            {'ctxtp':'filter', 'prop':'status.value', 'comparator' : 'eq', 'value':'Deleted', 'negate' : true, 'prompt':'Hide Deleted',
+             'qparam':'qp_showDeleted', 'default':'on'}
+          ],
+          qbeResults:[
+            {heading:'name', property:'name'},
+            {heading:'nominalPlatform', property:'nominalPlatform?.name'},
+            {heading:'status', property:'status.value'},
+          ],
+        }
+      };
+
+      $http.post(urlBase+'/search', {cfg:qconfig}).
+        success(function(data,status,headers,config) {
+          $log.debug("OK:: data %o",data);
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
+
+      return {}
+
     };
 
     return dataFactory;
