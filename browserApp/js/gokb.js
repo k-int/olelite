@@ -21,11 +21,11 @@
       {name:'Package Name', field:'name'},
       {name:'GOKb Status', field:'status'},
       {name:'OLE Status'},
-      {name:'Primary Platform'},
-      {name:'Primary Platform Provider'},
-      {name:'# TIPPS'},
-      {name:'Date Created'},
-      {name:'Date Updated'}
+      {name:'Primary Platform', field:'nominalPlatform'},
+      {name:'Primary Platform Provider', field:'provider'},
+      {name:'# TIPPS', field:'numTipps'},
+      {name:'Date Created', field:'dateCreated'},
+      {name:'Date Updated', field:'lastUpdated'}
     ];
 
     var pageno=0;
@@ -67,7 +67,7 @@
     var dataFactory = {};
     
     dataFactory.getPackages = function (tgt, gridApi) {
-      $log.debug("getPackages ");
+      $log.debug("getPackages tgt.length:%i",tgt.length);
 
       // This is the config for the search
       var qconfig = {
@@ -90,12 +90,16 @@
           qbeResults:[
             {heading:'name', property:'name'},
             {heading:'nominalPlatform', property:'nominalPlatform?.name'},
+            {heading:'provider', property:'nominalPlatform?.provider?.name'},
             {heading:'status', property:'status.value'},
+            {heading:'dateCreated', property:'dateCreated'},
+            {heading:'lastUpdated', property:'lastUpdated'},
+            {heading:'numTipps', property:'tipps.size()'},
           ],
         }
       };
 
-      $http.post(urlBase+'/search', {cfg:qconfig}).
+      $http.post(urlBase+'/search', {cfg:qconfig}, { params : {offset:tgt.length} } ).
         success(function(data,status,headers,config) {
           $log.debug("OK:: data %o",data);
           for (var i = 0; i < data.rows.length; i++) {
