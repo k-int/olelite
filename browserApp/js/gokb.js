@@ -44,7 +44,7 @@
     };
 
     $scope.gridOptions.data = [];
-    gokbService.getPackages($scope.gridOptions.data)
+    gokbService.getPackages($scope.gridOptions.data, null)
     // $scope.gridOptions.data = getData(0);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
@@ -54,7 +54,7 @@
 
         $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
 
-        gokbService.getPackages($scope.gridOptions.data);
+        gokbService.getPackages($scope.gridOptions.data, gridApi);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
       });
@@ -66,7 +66,7 @@
     var urlBase = 'http://localhost:8080/gokb/api';
     var dataFactory = {};
     
-    dataFactory.getPackages = function (tgt) {
+    dataFactory.getPackages = function (tgt, gridApi) {
       $log.debug("getPackages ");
 
       // This is the config for the search
@@ -101,6 +101,8 @@
           for (var i = 0; i < data.rows.length; i++) {
             $log.debug("Adding row %d : %o", i, data.rows[i]);
             tgt.push(data.rows[i]);
+            if ( gridApi )
+              gridApi.infiniteScroll.dataLoaded();
           }
         }).
         error(function(data,status,headers,config) {
