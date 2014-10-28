@@ -14,9 +14,17 @@
 
   app.controller('GOKbCtrl', ['$scope', '$http', '$log', 'gokbService', function($scope,$http,$log,gokbService) {
 
+    $scope.qparams = {};
     $scope.gridOptions = {};
+
     // $scope.gridOptions.infiniteScrollPercentage = 20;
     // $scope.gridOptions.infiniteScroll = 20;
+
+    $scope.search = function() {
+      $log.debug("search %o",$scope.qparams);
+      $scope.gridOptions.data = [];
+      gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams)
+    }
  
     $scope.gridOptions.columnDefs = [
       {name:'Package Name', field:'name',enableColumnResizing: true },
@@ -45,7 +53,7 @@
     };
 
     $scope.gridOptions.data = [];
-    gokbService.getPackages($scope.gridOptions.data, null)
+    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams)
     // $scope.gridOptions.data = getData(0);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
@@ -55,7 +63,7 @@
 
         $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
 
-        gokbService.getPackages($scope.gridOptions.data, gridApi);
+        gokbService.getPackages($scope.gridOptions.data, gridApi, $scope.qparams);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
       });
@@ -67,8 +75,10 @@
     var urlBase = 'http://localhost:8080/gokb/api';
     var dataFactory = {};
     
-    dataFactory.getPackages = function (tgt, gridApi) {
+    dataFactory.getPackages = function (tgt, gridApi, qparams) {
       $log.debug("getPackages tgt.length:%i",tgt.length);
+
+      qparams.offset = tgt.length;
 
       // This is the config for the search
       var qconfig = {
@@ -100,11 +110,10 @@
         }
       };
 
-      $http.post(urlBase+'/search', {cfg:qconfig}, { params : {offset:tgt.length} } ).
+      $http.post(urlBase+'/search', {cfg:qconfig}, { params : qparams } ).
         success(function(data,status,headers,config) {
-          $log.debug("OK:: data %o",data);
           for (var i = 0; i < data.rows.length; i++) {
-            $log.debug("Adding row %d : %o", i, data.rows[i]);
+            // $log.debug("Adding row %d : %o", i, data.rows[i]);
             tgt.push(data.rows[i]);
             if ( gridApi )
               gridApi.infiniteScroll.dataLoaded();
