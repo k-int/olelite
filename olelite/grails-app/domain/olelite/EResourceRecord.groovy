@@ -2,16 +2,21 @@ package olelite
 
 class EResourceRecord {
 
+  String id
   String title
   String description
   String isbn
-  
+  BigDecimal version
+
   static constraints = {
+    version(max:new BigDecimal(99999999.0),scale:0)
   }
 
   static mapping = {
+    table 'ole_e_res_rec_t'
+
     version column: 'VER_NBR'
-    id column:'E_RES_REC_ID'
+    id generator:'assigned', column:'E_RES_REC_ID'
     title column:'TITLE'
     description column:'DESCR'
     isbn column:'ISBN', length:100
