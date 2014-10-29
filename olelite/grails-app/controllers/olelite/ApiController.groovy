@@ -1,6 +1,11 @@
 package olelite
 
 import static java.util.UUID.randomUUID
+import grails.converters.JSON
+// import grails.plugins.springsecurity.Secured
+import grails.util.GrailsNameUtils
+import java.security.SecureRandom
+import org.apache.commons.codec.binary.Base64
 
 class ApiController {
 
@@ -9,11 +14,11 @@ class ApiController {
   def search() {
     def result = [:]
 
-    User user = springSecurityService.currentUser
+    // User user = springSecurityService.currentUser
 
     log.debug("Entering SearchController:index");
 
-    result.max = params.max ? Integer.parseInt(params.max) : ( user.defaultPageSize ?: 10 );
+    result.max = params.max ? Integer.parseInt(params.max) : 10
     result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
 
     if ( request.JSON ) {
