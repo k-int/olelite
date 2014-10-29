@@ -3,6 +3,8 @@ package olelite
 import static java.util.UUID.randomUUID
 
 class ApiController {
+
+  def grailsApplication
   
   def search() {
     def result = [:]
