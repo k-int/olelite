@@ -1,5 +1,6 @@
 package olelite
 
+// This is like IssueEntitlement in KB+
 class EResourceRecordInstance {
 
   String id
@@ -13,7 +14,8 @@ class EResourceRecordInstance {
   static mapping = {
     table 'ole_e_res_rec_ins_t'
     version column: 'VER_NBR'
-    id generator:'assigned', column:'E_RES_INS_ID'
+    // id generator:'assigned', column:'E_RES_INS_ID'
+    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100], column:'E_RES_INS_ID'
     parent column:'E_RES_REC_ID'
   }
 

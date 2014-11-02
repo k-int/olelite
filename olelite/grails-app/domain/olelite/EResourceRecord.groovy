@@ -16,7 +16,10 @@ class EResourceRecord {
     table 'ole_e_res_rec_t'
 
     version column: 'VER_NBR'
-    id generator:'assigned', column:'E_RES_REC_ID'
+    // Consider --    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100]
+    // id generator:'assigned', column:'E_RES_REC_ID'
+    // seqhilo
+    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100], column:'E_RES_REC_ID'
     title column:'TITLE'
     description column:'DESCR'
     isbn column:'ISBN', length:100
