@@ -107,6 +107,11 @@ log4j = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
+    appenders {
+      console name: "stdout", threshold: org.apache.log4j.Level.ALL
+    }
+
+
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
@@ -118,4 +123,18 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug  'grails.app.controllers',
+           'grails.app.service',
+           'grails.app.services',
+           'grails.app.domain',
+           'grails.app.tagLib',
+           'grails.app.filters',
+           'grails.app.conf',
+           'grails.app.jobs',
+           'com.k_int',
+           'com.k_int.apis',
+           'com.k_int.asset.pipeline.groovy',
+           'asset.pipeline.less.compilers'
+
 }

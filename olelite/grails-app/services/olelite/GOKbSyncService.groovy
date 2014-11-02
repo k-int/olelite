@@ -17,7 +17,12 @@ class GOKbSyncService {
     log.debug("Collect package changes since ${date}");
 
     oai_client.getChangesSince(date, 'gokb') { rec ->
+      log.debug("Process..");
       log.debug("Got OAI Record ${rec.header.identifier} datestamp: ${rec.header.datestamp}");
+      log.debug("Pakcage name : ${rec.metadata.gokb.package.name.text()}");
+      rec.metadata.gokb.package.TIPPs.TIPP.each { tipp ->
+        log.debug("  tipp -> ${tipp.@id} ${tipp.title.name.text}");
+      }
     }
 
   }
