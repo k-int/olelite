@@ -2,8 +2,9 @@ package olelite
 
 class GokbPackage {
 
-  String id
+  Integer id
   String packageName
+  String objId
   String packageIdentifier
   BigDecimal version
 
@@ -16,10 +17,13 @@ class GokbPackage {
 
     version column: 'VER_NBR'
     // Consider --    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100]
-    // id generator:'assigned', column:'E_RES_REC_ID'
+    // This works OK
+    // id generator:'assigned', column:'PKG_ID'
     // seqhilo
-    id generator: 'hilo', params: [table: 'ole_gokb_pkg_s', column: 'id', max_lo: 100], column:'PKG_ID'
+    // id generator: 'hilo', params: [table: 'ole_gokb_pkg_t', column: 'PKG_ID', max_lo: 100], column:'PKG_ID'
+    id generator: 'hilo', params: [table: 'ole_gokb_pkg_s', column: 'ID', max_lo: 100], column:'PKG_ID'
     packageName column:'PKG_NAME'
+    objId column:'OBJ_ID'
     packageIdentifier column:'PKG_IDENTIFIER'
   }
 }
