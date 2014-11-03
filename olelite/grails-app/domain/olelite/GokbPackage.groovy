@@ -7,6 +7,7 @@ class GokbPackage {
   String objId
   String packageIdentifier
   BigDecimal version
+  byte[] content
 
   static constraints = {
     version(max:new BigDecimal(99999999.0),scale:0)
@@ -24,6 +25,7 @@ class GokbPackage {
     id generator: 'hilo', params: [table: 'ole_gokb_pkg_s', column: 'ID', max_lo: 100], column:'PKG_ID'
     packageName column:'PKG_NAME'
     objId column:'OBJ_ID'
+    content column:'PKG_CONTENT', type:'blob'
     packageIdentifier column:'PKG_IDENTIFIER'
   }
 }
