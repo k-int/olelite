@@ -43,7 +43,7 @@ class GOKbSyncService {
 
 
       def newpkg = packageConv(rec.metadata)
-      def newpkg_json = new JsonBuilder( o ).toPrettyString()
+      def newpkg_json = new JsonBuilder( newpkg.parsed_rec ).toPrettyString()
 
       def old_package = null
 
@@ -52,7 +52,7 @@ class GOKbSyncService {
       def package_record = GokbPackage.findByPackageIdentifier(rec.header.identifier)
       if ( package_record == null ) {
         log.debug("Initialise a new package...");
-        old_package == [tipps:[]]
+        old_package = [tipps:[]]
       }
       else {
         // Load in old package record
@@ -60,7 +60,9 @@ class GOKbSyncService {
         old_package = JSON.parse(package_record.content)
       }
 
-      com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
+      def ctx = null;
+      def auto_accept_flag = false;
+      com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
     }
 
   }
@@ -71,7 +73,7 @@ class GOKbSyncService {
    */
   def packageConv = { md ->
     println("Package conv...");
-    // Convert XML to internal structure ansd return
+    // Convert XML to internal structure and return
     def result = [:]
     // result.parsed_rec = xml.text().getBytes();
     result.title = md.gokb.package.name.text()
@@ -82,7 +84,7 @@ class GOKbSyncService {
     result.parsed_rec.tipps = []
     int ctr=0
     md.gokb.package.TIPPs.TIPP.each { tip ->
-      log.debug("Processing tipp ${ctr++} from package ${result.parsed_rec.packageId} - ${result.title}");
+      // log.debug("Processing tipp ${ctr++} from package ${result.parsed_rec.packageId} - ${result.title}");
       def newtip = [
                      title: [
                        name:tip.title.name.text(), 
@@ -114,8 +116,8 @@ class GOKbSyncService {
       }
       newtip.title.identifiers.add([namespace:'uri',value:newtip.titleId]);
 
-      log.debug("Harmonise identifiers");
-      harmoniseTitleIdentifiers(newtip);
+      // log.debug("Harmonise identifiers");
+      // harmoniseTitleIdentifiers(newtip);
 
       result.parsed_rec.tipps.add(newtip)
     }

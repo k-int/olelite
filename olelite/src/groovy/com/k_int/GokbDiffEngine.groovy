@@ -11,7 +11,7 @@ public class GokbDiffEngine {
   def static diff(ctx, oldpkg, newpkg, newTippClosure, updatedTippClosure, deletedTippClosure, pkgPropChangeClosure, tippUnchangedClosure, auto_accept) {
 
     if (( oldpkg == null )||(newpkg==null)) {
-      println("Error - null package passed to diff");
+      println("Error - null package passed to diff (old ${oldpkg!=null}, new ${newpkg!=null})");
       return
     }
   
