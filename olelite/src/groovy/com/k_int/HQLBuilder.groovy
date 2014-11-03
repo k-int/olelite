@@ -258,8 +258,8 @@ public class HQLBuilder {
 
   static def buildFieldList(defns) {
     def result = new java.io.StringWriter()
-    result.write('o.id');
-    result.write(',o.class');
+    result.write('o');
+    // result.write(',type(o)');
     defns.each { defn ->
       result.write(",o.");
       result.write(defn.property);
