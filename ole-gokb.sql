@@ -57,3 +57,5 @@ CREATE TABLE `OLE_GOKB_PKG_S` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
+insert into ole_gokb_pkg_s values (0);
+

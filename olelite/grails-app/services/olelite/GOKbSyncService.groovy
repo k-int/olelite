@@ -10,23 +10,23 @@ import groovy.json.*
 class GOKbSyncService {
 
   def onNewTipp = { ctx, tipp_record, auto_accept ->
-    log.debug("onNewTipp");
+    // log.debug("onNewTipp");
   }
 
   def onUpdatedTipp = { ctx, new_tipp_record, original_tipp_record, tipp_diff, auto_accept ->
-    log.debug("onUpdatedTipp");
+    // log.debug("onUpdatedTipp");
   }
 
   def onDeletedTipp = { ctx, tipp_record, auto_accept ->
-    log.debug("onDeletedTipp");
+    // log.debug("onDeletedTipp");
   }
 
   def onPkgPropChange = { ctx, property, value, auto_accept ->
-    log.debug("onPkgPropChange");
+    // log.debug("onPkgPropChange");
   }
 
   def onTippUnchanged = { ctx, tipp_record ->
-    log.debug("onTippUnchanged");
+    // log.debug("onTippUnchanged");
   }
 
   def packageSync() {
@@ -39,7 +39,8 @@ class GOKbSyncService {
 
     oai_client.getChangesSince(date, 'gokb') { rec ->
       log.debug("Process..");
-      log.debug("Got OAI Record ${rec.header.identifier} datestamp: ${rec.header.datestamp}");
+      def package_identifier = rec.header.identifier.text();
+      log.debug("Got OAI Record ${package_identifier} datestamp: ${rec.header.datestamp}");
 
 
       def newpkg = packageConv(rec.metadata)
@@ -49,10 +50,16 @@ class GOKbSyncService {
 
       // Step 1 : See if we can locate an existing record for this package - If we can, then this is an update
       // If we can't then this is a new package...
-      def package_record = GokbPackage.findByPackageIdentifier(rec.header.identifier)
+      log.debug("looking up package by identifier: ${package_identifier}");
+
+      def package_record = GokbPackage.findByPackageIdentifier(package_identifier)
+
       if ( package_record == null ) {
         log.debug("Initialise a new package...");
         old_package = [tipps:[]]
+        package_record = new GokbPackage(packageIdentifier:package_identifier);
+        package_record.objId = java.util.UUID.randomUUID().toString()
+        package_record.packageName = newpkg.parsed_rec.packageName
       }
       else {
         // Load in old package record
@@ -63,6 +70,10 @@ class GOKbSyncService {
       def ctx = null;
       def auto_accept_flag = false;
       com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
+
+
+      package_record.content = newpkg_json
+      package_record.save(flush:true,failOnError:true);
     }
 
   }
