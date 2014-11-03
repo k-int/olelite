@@ -9,6 +9,8 @@ import groovy.json.*
 @Transactional
 class GOKbSyncService {
 
+  def sessionFactory
+
   def onNewTipp = { ctx, tipp_record, auto_accept ->
     // log.debug("onNewTipp");
   }
@@ -64,7 +66,8 @@ class GOKbSyncService {
       else {
         // Load in old package record
         log.debug("Loading old package...");
-        old_package = JSON.parse(package_record.content)
+        def rdr = BufferedReader(new InputStreamReader(package_record.content));
+        old_package = JSON.parse(rdr)
       }
 
       def ctx = null;
@@ -72,7 +75,7 @@ class GOKbSyncService {
       com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
 
 
-      package_record.content = newpkg_json
+      package_record.setContent(newpkg_json.getBytes('UTF-8'));
       package_record.save(flush:true,failOnError:true);
     }
 
