@@ -32,7 +32,7 @@
       {name:'Local Status',enableColumnResizing: true },
       {name:'Primary Platform', field:'nominalPlatform',enableColumnResizing: true },
       {name:'Primary Platform Provider', field:'provider',enableColumnResizing: true },
-      {name:'# Titles', field:'numTipps',enableColumnResizing: true },
+      {name:'# Titles', field:'numTitles',enableColumnResizing: true },
       {name:'Date Created', field:'dateCreated',enableColumnResizing: true },
       {name:'Date Updated', field:'lastUpdated',enableColumnResizing: true }
     ];
