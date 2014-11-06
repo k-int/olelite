@@ -72,8 +72,8 @@
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
-    // var urlBase = 'http://localhost:8080/gokb/api';
-    var urlBase = 'https://gokb.k-int.com/gokb/api';
+    var urlBase = 'http://localhost:8080/gokb/api';
+    // var urlBase = 'https://gokb.k-int.com/gokb/api';
     var dataFactory = {};
     
     dataFactory.getPackages = function (tgt, gridApi, qparams) {

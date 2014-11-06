@@ -163,3 +163,8 @@ globalSearchTemplates = [
     ]
   ],
 ]
+
+cors.headers = ['Access-Control-Allow-Origin': '*']
+// 'Access-Control-Allow-Origin': 'http://xissn.worldcat.org'
+//     'My-Custom-Header': 'some value'
+

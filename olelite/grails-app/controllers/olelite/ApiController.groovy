@@ -39,16 +39,17 @@ class ApiController {
 
       result.rows = []
       qresult.recset.each { r ->
-        def row = []
+        def row = [:]
         def first = true
+        int i=0;
         r.each { c ->
           if ( first ) {
-            row.add(c.class.name)
-            row.add(c.id);
+            row['__class']=c.class.name
+            row['__id']=c.id
             first = false
           }
           else {
-            row.add(c)
+            row[qbetemplate.qbeConfig.qbeResults[i++].property] = c
           }
         }
         result.rows.add(row);

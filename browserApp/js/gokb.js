@@ -27,7 +27,7 @@
     }
  
     $scope.gridOptions.columnDefs = [
-      {name:'Package Name', field:'name',enableColumnResizing: true },
+      {name:'Package Name', field:'packageName',enableColumnResizing: true },
       {name:'Global Status', field:'status',enableColumnResizing: true },
       {name:'Local Status',enableColumnResizing: true },
       {name:'Primary Platform', field:'nominalPlatform',enableColumnResizing: true },
@@ -72,47 +72,19 @@
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
-    // var urlBase = 'http://localhost:8080/gokb/api';
-    var urlBase = 'https://gokb.k-int.com/gokb/api';
+    var urlBase = 'http://localhost:8080/olelite/api';
+    // var urlBase = 'https://gokb.k-int.com/gokb/api';
     var dataFactory = {};
     
     dataFactory.getPackages = function (tgt, gridApi, qparams) {
       $log.debug("getPackages tgt.length:%i",tgt.length);
 
       qparams.offset = tgt.length;
+      qparams.tmpl='packages';
 
-      // This is the config for the search
-      var qconfig = {
-        baseclass:'org.gokb.cred.Package',
-        defaultSort:'name',
-        defaultOrder:'asc',
-        qbeConfig:{
-          qbeForm:[
-            {
-              prompt:'Name of Package',
-              qparam:'qp_name',
-              placeholder:'Package Name',
-              contextTree:{'ctxtp':'qry', 'comparator' : 'ilike', 'prop':'normname', 'wildcard':'B', normalise:true}
-            }
-          ],
-          qbeGlobals:[
-            {'ctxtp':'filter', 'prop':'status.value', 'comparator' : 'eq', 'value':'Deleted', 'negate' : true, 'prompt':'Hide Deleted',
-             'qparam':'qp_showDeleted', 'default':'on'}
-          ],
-          qbeResults:[
-            {heading:'name', property:'name'},
-            {heading:'nominalPlatform', property:'nominalPlatform?.name'},
-            {heading:'provider', property:'nominalPlatform?.provider?.name'},
-            {heading:'status', property:'status.value'},
-            {heading:'dateCreated', property:'dateCreated'},
-            {heading:'lastUpdated', property:'lastUpdated'},
-            {heading:'numTipps', property:'tipps.size()'},
-          ],
-        }
-      };
-
-      $http.post(urlBase+'/search', {cfg:qconfig}, { params : qparams } ).
+      $http.get(urlBase+'/search', { params : qparams } ).
         success(function(data,status,headers,config) {
+          $log.debug("result: %o",data);
           for (var i = 0; i < data.rows.length; i++) {
             // $log.debug("Adding row %d : %o", i, data.rows[i]);
             tgt.push(data.rows[i]);
