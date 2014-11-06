@@ -15,9 +15,24 @@ class GokbPackage {
   String packageIdentifier
   BigDecimal version
   Blob content
+  BigDecimal numTitles
+  String globalStatus
+  String localStatus
+  String primaryPlatform
+  String primaryPlatformProvider
+  Date createdDate
+  Date lastModifiedDate
 
   static constraints = {
     version(max:new BigDecimal(99999999.0),scale:0)
+    numTitles(max:new BigDecimal(99999999.0),scale:0)
+    numTitles(nullable:true, blank:false)
+    globalStatus(nullable:true, blank:false)
+    localStatus(nullable:true, blank:false)
+    primaryPlatform(nullable:true, blank:false)
+    primaryPlatformProvider(nullable:true, blank:false)
+    createdDate(nullable:true, blank:false)
+    lastModifiedDate(nullable:true, blank:false)
   }
 
   static mapping = {
@@ -34,6 +49,13 @@ class GokbPackage {
     objId column:'OBJ_ID'
     content column:'PKG_CONTENT', type:'blob'
     packageIdentifier column:'PKG_IDENTIFIER'
+    numTitles column:'TITLE_COUNT'
+    globalStatus column:'GLOBAL_STATUS'
+    localStatus column:'LOCAL_STATUS'
+    primaryPlatform column:'PRIMARY_PLAT'
+    primaryPlatformProvider column:'PRIMARY_PLAT_PROV'
+    createdDate column:'DATE_CREATED'
+    lastModifiedDate column:'LAST_UPDATED'
   }
 
   def setContent(byte[] bytes) {

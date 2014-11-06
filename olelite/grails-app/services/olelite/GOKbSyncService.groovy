@@ -40,43 +40,46 @@ class GOKbSyncService {
     log.debug("Collect package changes since ${date}");
 
     oai_client.getChangesSince(date, 'gokb') { rec ->
-      log.debug("Process..");
-      def package_identifier = rec.header.identifier.text();
-      log.debug("Got OAI Record ${package_identifier} datestamp: ${rec.header.datestamp}");
-
-
-      def newpkg = packageConv(rec.metadata)
-      def newpkg_json = new JsonBuilder( newpkg.parsed_rec ).toPrettyString()
-
-      def old_package = null
-
-      // Step 1 : See if we can locate an existing record for this package - If we can, then this is an update
-      // If we can't then this is a new package...
-      log.debug("looking up package by identifier: ${package_identifier}");
-
-      def package_record = GokbPackage.findByPackageIdentifier(package_identifier)
-
-      if ( package_record == null ) {
-        log.debug("Initialise a new package...");
-        old_package = [tipps:[]]
-        package_record = new GokbPackage(packageIdentifier:package_identifier);
-        package_record.objId = java.util.UUID.randomUUID().toString()
-        package_record.packageName = newpkg.parsed_rec.packageName
+      GokbPackage.withNewTransaction { status ->
+        log.debug("Process..");
+        def package_identifier = rec.header.identifier.text();
+        log.debug("Got OAI Record ${package_identifier} datestamp: ${rec.header.datestamp}");
+  
+  
+        def newpkg = packageConv(rec.metadata)
+        def newpkg_json = new JsonBuilder( newpkg.parsed_rec ).toPrettyString()
+  
+        def old_package = null
+  
+        // Step 1 : See if we can locate an existing record for this package - If we can, then this is an update
+        // If we can't then this is a new package...
+        log.debug("looking up package by identifier: ${package_identifier}");
+  
+        def package_record = GokbPackage.findByPackageIdentifier(package_identifier)
+  
+        if ( package_record == null ) {
+          log.debug("Initialise a new package...");
+          old_package = [tipps:[]]
+          package_record = new GokbPackage(packageIdentifier:package_identifier);
+          package_record.objId = java.util.UUID.randomUUID().toString()
+          package_record.packageName = newpkg.parsed_rec.packageName
+        }
+        else {
+          // Load in old package record
+          log.debug("Loading old package...");
+          def rdr = BufferedReader(new InputStreamReader(package_record.content));
+          old_package = JSON.parse(rdr)
+        }
+  
+        def ctx = null;
+        def auto_accept_flag = false;
+        com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
+  
+  
+        package_record.setContent(newpkg_json.getBytes('UTF-8'));
+        package_record.numTitles = newpkg.parsed_rec.tipps?.size();
+        package_record.save(flush:true,failOnError:true);
       }
-      else {
-        // Load in old package record
-        log.debug("Loading old package...");
-        def rdr = BufferedReader(new InputStreamReader(package_record.content));
-        old_package = JSON.parse(rdr)
-      }
-
-      def ctx = null;
-      def auto_accept_flag = false;
-      com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
-
-
-      package_record.setContent(newpkg_json.getBytes('UTF-8'));
-      package_record.save(flush:true,failOnError:true);
     }
 
   }

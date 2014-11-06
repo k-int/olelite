@@ -159,6 +159,13 @@ globalSearchTemplates = [
       ],
       qbeResults:[
         [heading:'Package Name', property:'packageName'],
+        [heading:'Num Titles', property:'numTitles'],
+        [heading:'Global Status', property:'globalStatus'],
+        [heading:'Local Status', property:'localStatus'],
+        [heading:'Primary Platform', property:'primaryPlatform'],
+        [heading:'Primary Platform Provider', property:'primaryPlatformProvider'],
+        [heading:'Created Date', property:'createdDate'],
+        [heading:'Last Modified Date', property:'lastModifiedDate'],
       ]
     ]
   ],
