@@ -32,12 +32,15 @@ class GOKbSyncService {
   }
 
   def packageSync() {
-    def oai_client = new OaiClient(host:'https://test-gokb.kuali.org/gokb/oai/packages'); // ?verb=listRecords&metadataPrefix=gokb
+    def oai_client = new OaiClient(host:'http://localhost:8081/gokb/oai/packages'); // ?verb=listRecords&metadataPrefix=gokb
+    // def oai_client = new OaiClient(host:'https://test-gokb.kuali.org/gokb/oai/packages'); // ?verb=listRecords&metadataPrefix=gokb
     // def oai_client = new OaiClient(host:'https://gokb.k-int.com/gokb/oai/packages'); // ?verb=listRecords&metadataPrefix=gokb
     def max_timestamp = 0
     def date = new Date(0);
 
     log.debug("Collect package changes since ${date}");
+
+    def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     oai_client.getChangesSince(date, 'gokb') { rec ->
       GokbPackage.withNewTransaction { status ->
@@ -62,6 +65,8 @@ class GOKbSyncService {
           old_package = [tipps:[]]
           package_record = new GokbPackage(packageIdentifier:package_identifier);
           package_record.objId = java.util.UUID.randomUUID().toString()
+          package_record.localStatus = 'Not imported'
+          package_record.createdDate = sdf.parse(newpkg.parsed_rec.dateCreated);
           package_record.packageName = newpkg.parsed_rec.packageName
         }
         else {
@@ -78,6 +83,11 @@ class GOKbSyncService {
   
         package_record.setContent(newpkg_json.getBytes('UTF-8'));
         package_record.numTitles = newpkg.parsed_rec.tipps?.size();
+        package_record.globalStatus = newpkg.parsed_rec.status
+        package_record.primaryPlatform = newpkg.parsed_rec.nominalPlatform
+        package_record.primaryPlatformProvider = newpkg.parsed_rec.nominalProvider
+        package_record.lastModifiedDate = new Date()
+
         package_record.save(flush:true,failOnError:true);
       }
     }
@@ -98,6 +108,12 @@ class GOKbSyncService {
     result.parsed_rec = [:]
     result.parsed_rec.packageName = md.gokb.package.name.text()
     result.parsed_rec.packageId = md.gokb.package.'@id'.text()
+    result.parsed_rec.status = md.gokb.package.status?.text()
+    result.parsed_rec.nominalPlatform = md.gokb.package.nominalPlatform?.text()
+    result.parsed_rec.nominalProvider = md.gokb.package.nominalProvider?.text()
+    result.parsed_rec.dateCreated = md.gokb.package.dateCreated?.text()
+    result.parsed_rec.scope = md.gokb.package.scope?.text()
+    result.parsed_rec.listStatus = md.gokb.package.listStatus?.text()
     result.parsed_rec.tipps = []
     int ctr=0
     md.gokb.package.TIPPs.TIPP.each { tip ->

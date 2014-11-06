@@ -36,6 +36,7 @@ class ApiController {
       // Add the page information.
       result.page_current = (result.offset / result.max) + 1
       result.page_total = (qresult.reccount / result.max).toInteger() + (qresult.reccount % result.max > 0 ? 1 : 0)
+      result.reccount = qresult.reccount
 
       result.rows = []
       qresult.recset.each { r ->

@@ -16,6 +16,7 @@
 
     $scope.qparams = {};
     $scope.gridOptions = {};
+    $scope.searchStatus = ''
 
     // $scope.gridOptions.infiniteScrollPercentage = 20;
     // $scope.gridOptions.infiniteScroll = 20;
@@ -23,7 +24,7 @@
     $scope.search = function() {
       $log.debug("search %o",$scope.qparams);
       $scope.gridOptions.data = [];
-      gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams)
+      gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope)
     }
  
     $scope.gridOptions.columnDefs = [
@@ -40,21 +41,8 @@
     var pageno=0;
     var total = 1000;
 
-    var getData = function(page) {
-      var page_of_data = []
-      // $log.debug("Calling get packages...");
-      // var result = gokbService.getPackages();
-      // $log.debug("result of getPackages %o",result);
-  
-      for (var i = 0; i < 10; ++i) {
-        page_of_data.push({'name':'Test Package['+pageno+'] '+i});
-      }
-      return page_of_data;
-    };
-
     $scope.gridOptions.data = [];
-    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams)
-    // $scope.gridOptions.data = getData(0);
+    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope)
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
@@ -63,7 +51,7 @@
 
         $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
 
-        gokbService.getPackages($scope.gridOptions.data, gridApi, $scope.qparams);
+        gokbService.getPackages($scope.gridOptions.data, gridApi, $scope.qparams, $scope);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
       });
@@ -76,14 +64,17 @@
     // var urlBase = 'https://gokb.k-int.com/gokb/api';
     var dataFactory = {};
     
-    dataFactory.getPackages = function (tgt, gridApi, qparams) {
+    dataFactory.getPackages = function (tgt, gridApi, qparams, scope) {
       $log.debug("getPackages tgt.length:%i",tgt.length);
 
       qparams.offset = tgt.length;
       qparams.tmpl='packages';
+      qparams.max='25';
 
       $http.get(urlBase+'/search', { params : qparams } ).
         success(function(data,status,headers,config) {
+          scope.searchStatus = 'Search found '+data.reccount+' records';
+
           $log.debug("result: %o",data);
           for (var i = 0; i < data.rows.length; i++) {
             // $log.debug("Adding row %d : %o", i, data.rows[i]);
