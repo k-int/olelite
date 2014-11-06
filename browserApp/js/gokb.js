@@ -29,13 +29,13 @@
  
     $scope.gridOptions.columnDefs = [
       {name:'Package Name', field:'packageName',enableColumnResizing: true },
-      {name:'Global Status', field:'status',enableColumnResizing: true },
-      {name:'Local Status',enableColumnResizing: true },
-      {name:'Primary Platform', field:'nominalPlatform',enableColumnResizing: true },
-      {name:'Primary Platform Provider', field:'provider',enableColumnResizing: true },
+      {name:'Global Status', field:'globalStatus',enableColumnResizing: true },
+      {name:'Local Status', field:'localStatus', enableColumnResizing: true },
+      {name:'Primary Platform', field:'primaryPlatform',enableColumnResizing: true },
+      {name:'Primary Platform Provider', field:'primaryPlatformProvider',enableColumnResizing: true },
       {name:'# Titles', field:'numTitles',enableColumnResizing: true },
-      {name:'Date Created', field:'dateCreated',enableColumnResizing: true },
-      {name:'Date Updated', field:'lastUpdated',enableColumnResizing: true }
+      {name:'Date Created', field:'createdDate',enableColumnResizing: true },
+      {name:'Date Updated', field:'lastModifiedDate',enableColumnResizing: true }
     ];
 
     var pageno=0;
