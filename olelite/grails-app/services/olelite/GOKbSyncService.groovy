@@ -12,22 +12,44 @@ class GOKbSyncService {
   def sessionFactory
 
   def onNewTipp = { ctx, tipp_record, auto_accept ->
+    def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+     // title: [
+     //   name:tip.title.name.text(),
+     //   identifiers:[]
+     //   ],
+     //   titleId:tip.title.'@id'.text(),
+     //   platform:tip.platform.name.text(),
+     //   platformId:tip.platform.'@id'.text(),
+     //   coverage:[],
+     //   url:tip.url.text(),
+     //   identifiers:[]
+
+
+
     log.debug("onNewTipp (ctx=${ctx})");
     def new_tipp = new GokbTipp()
-    new_tipp.isbn = null;
-    new_tipp.issn = null;
-    new_tipp.eissn = null;
-    new_tipp.doi = null;
-    new_tipp.pkg = ctx;
-    new_tipp.accessUrl = null;
-    new_tipp.coverageStartDate = null;
-    new_tipp.coverageStartVolume = null;
-    new_tipp.coverageStartIssue = null;
-    new_tipp.coverageEndDate = null;
-    new_tipp.coverageEndVolume = null;
-    new_tipp.coverageEndIssue = null;
+    new_tipp.objId = java.util.UUID.randomUUID().toString()
+    new_tipp.isbn = getIdentifierValue(tipp_record.title.identifiers,'isbn');
+    new_tipp.issn = getIdentifierValue(tipp_record.title.identifiers,'issn');
+    new_tipp.eissn = getIdentifierValue(tipp_record.title.identifiers,'eissn');
+    new_tipp.doi = getIdentifierValue(tipp_record.title.identifiers,'doi');
+    new_tipp.pkg = ctx.pkg;
+    new_tipp.accessUrl = tipp_record.title.url;
+
+    if ( tipp_record.coverage?.size() > 0 ) {
+      new_tipp.coverageStartDate = tipp_record.coverage[0].startDate ? sdf.parse(tipp_record.coverage[0].startDate) : null;
+      new_tipp.coverageStartVolume = tipp_record.coverage[0].startVolume;
+      new_tipp.coverageStartIssue = tipp_record.coverage[0].startIssue;
+      new_tipp.coverageEndDate = tipp_record.coverage[0].endDate ? sdf.parse(tipp_record.coverage[0].endDate) : null;
+      new_tipp.coverageEndVolume = tipp_record.coverage[0].endVolume;
+      new_tipp.coverageEndIssue = tipp_record.coverage[0].endIssue;
+      new_tipp.coverageDepth = tipp_record.coverage[0].coverageDepth;
+      new_tipp.coverageNote = tipp_record.coverage[0].coverageNote;
+    }
+
     new_tipp.createdDate = new Date();
-    new_tipp.lastModifiedDatnew Date()
+    new_tipp.lastModifiedDate = new Date()
     new_tipp.save();
   }
 
@@ -180,4 +202,13 @@ class GOKbSyncService {
     return result
   }
 
+  static def getIdentifierValue(idlst, namespace) {
+    def result = null;
+    idlst.each {
+      if ( it.namespace == namespace ) {
+        result = it.value;
+      }
+    }
+    return result;
+  }
 }
