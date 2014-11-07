@@ -2,8 +2,7 @@
 
 (function() {
   var app = angular.module('GOKb',[ 'ui.bootstrap', 
-                                    'ui.grid',    // See http://ui-grid.info/
-                                    // 'ui.grid.pagination',
+                                    'ui.grid',    // See http://ui-grid.info/ 'ui.grid.pagination',
                                     'ui.grid.infiniteScroll',
                                     'ui.grid.resizeColumns',
                                     'ui.grid.selection'
@@ -17,8 +16,11 @@
 
     $scope.qparams = {};
     $scope.gridOptions = {};
-    $scope.gridOptions.multiSelect = false;
+    $scope.gridOptions.multiSelect=false;
+    $scope.gridOptions.enableRowSelection=true;
+    $scope.gridOptions.enableSelectAll=false;
     $scope.searchStatus = ''
+    $scope.selectedPackage = null;
 
     // $scope.gridOptions.infiniteScrollPercentage = 20;
     // $scope.gridOptions.infiniteScroll = 20;
@@ -44,7 +46,7 @@
     var total = 1000;
 
     $scope.gridOptions.data = [];
-    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope)
+    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
@@ -57,6 +59,14 @@
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
       });
+
+      gridApi.selection.on.rowSelectionChanged($scope,function(row){
+        $log.debug("Selected row: %o",row);
+        if ( row && row.entity ) {
+          $scope.selectedPackage = row.entity;
+        }
+      });
+
     };
  
   }]);
