@@ -12,23 +12,39 @@ class GOKbSyncService {
   def sessionFactory
 
   def onNewTipp = { ctx, tipp_record, auto_accept ->
-    // log.debug("onNewTipp");
+    log.debug("onNewTipp (ctx=${ctx})");
+    def new_tipp = new GokbTipp()
+    new_tipp.isbn = null;
+    new_tipp.issn = null;
+    new_tipp.eissn = null;
+    new_tipp.doi = null;
+    new_tipp.pkg = ctx;
+    new_tipp.accessUrl = null;
+    new_tipp.coverageStartDate = null;
+    new_tipp.coverageStartVolume = null;
+    new_tipp.coverageStartIssue = null;
+    new_tipp.coverageEndDate = null;
+    new_tipp.coverageEndVolume = null;
+    new_tipp.coverageEndIssue = null;
+    new_tipp.createdDate = new Date();
+    new_tipp.lastModifiedDatnew Date()
+    new_tipp.save();
   }
 
   def onUpdatedTipp = { ctx, new_tipp_record, original_tipp_record, tipp_diff, auto_accept ->
-    // log.debug("onUpdatedTipp");
+    log.debug("onUpdatedTipp (ctx=${ctx})");
   }
 
   def onDeletedTipp = { ctx, tipp_record, auto_accept ->
-    // log.debug("onDeletedTipp");
+    log.debug("onDeletedTipp (ctx=${ctx})");
   }
 
   def onPkgPropChange = { ctx, property, value, auto_accept ->
-    // log.debug("onPkgPropChange");
+    log.debug("onPkgPropChange (ctx=${ctx})");
   }
 
   def onTippUnchanged = { ctx, tipp_record ->
-    // log.debug("onTippUnchanged");
+    log.debug("onTippUnchanged (ctx=${ctx})");
   }
 
   def packageSync() {
@@ -67,7 +83,9 @@ class GOKbSyncService {
           package_record.objId = java.util.UUID.randomUUID().toString()
           package_record.localStatus = 'Not imported'
           package_record.createdDate = sdf.parse(newpkg.parsed_rec.dateCreated);
+          package_record.lastModifiedDate = new Date()
           package_record.packageName = newpkg.parsed_rec.packageName
+          package_record.save(flush:true,failOnError:true);
         }
         else {
           // Load in old package record
@@ -76,8 +94,10 @@ class GOKbSyncService {
           old_package = JSON.parse(rdr)
         }
   
-        def ctx = null;
+        def ctx = [ pkg: package_record ]
         def auto_accept_flag = false;
+
+        // Call the various handlers
         com.k_int.GokbDiffEngine.diff(ctx, old_package, newpkg.parsed_rec, onNewTipp, onUpdatedTipp, onDeletedTipp, onPkgPropChange, onTippUnchanged, auto_accept_flag)
   
   

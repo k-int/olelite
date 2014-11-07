@@ -22,6 +22,17 @@ class GokbTipp {
 
   static constraints = {
     version(max:new BigDecimal(99999999.0),scale:0)
+    isbn(nullable:true, blank:true);
+    issn(nullable:true, blank:true);
+    eissn(nullable:true, blank:true);
+    doi(nullable:true, blank:true);
+    accessUrl(nullable:true, blank:true);
+    coverageStartDate(nullable:true, blank:true);
+    coverageStartVolume(nullable:true, blank:true);
+    coverageStartIssue(nullable:true, blank:true);
+    coverageEndDate(nullable:true, blank:true);
+    coverageEndVolume(nullable:true, blank:true);
+    coverageEndIssue(nullable:true, blank:true);
     createdDate(nullable:true, blank:false)
     lastModifiedDate(nullable:true, blank:false)
   }
