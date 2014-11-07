@@ -76,7 +76,13 @@
  
   }]);
 
-  app.controller('GOKbIngestCtrl', ['$scope', '$http', '$log', 'gokbService', function($scope,$http,$log,gokbService) {
+  app.controller('GOKbIngestCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'gokbService', 
+                                   function($scope,$http,$log,$location,$routeParams,gokbService) {
+
+    $scope.model = {
+      packageId: $routeParams.packageId
+    };
+
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
