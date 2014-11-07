@@ -2,10 +2,11 @@
 
 (function() {
   var app = angular.module('GOKb',[ 'ui.bootstrap', 
-                                    'ui.grid', 
+                                    'ui.grid',    // See http://ui-grid.info/
                                     // 'ui.grid.pagination',
                                     'ui.grid.infiniteScroll',
-                                    'ui.grid.resizeColumns'
+                                    'ui.grid.resizeColumns',
+                                    'ui.grid.selection'
                                     ]);
 
   app.run(function($http) {
@@ -16,6 +17,7 @@
 
     $scope.qparams = {};
     $scope.gridOptions = {};
+    $scope.gridOptions.multiSelect = false;
     $scope.searchStatus = ''
 
     // $scope.gridOptions.infiniteScrollPercentage = 20;
