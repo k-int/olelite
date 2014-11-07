@@ -72,6 +72,7 @@
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
+    // var urlBase = 'http://192.168.2.69:8080/olelite/api';
     var urlBase = 'http://localhost:8080/olelite/api';
     // var urlBase = 'https://gokb.k-int.com/gokb/api';
     var dataFactory = {};
