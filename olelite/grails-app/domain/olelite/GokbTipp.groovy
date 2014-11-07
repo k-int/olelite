@@ -10,6 +10,7 @@ class GokbTipp {
   def sessionFactory
 
   Integer id
+  BigDecimal version
   Date createdDate
   Date lastModifiedDate
 
