@@ -77,4 +77,10 @@ class ApiController {
     log.debug("process recset..");
   }
 
+  def materialisePackage() {
+    log.debug("materialisePackage ${params}");
+    def result = [:]
+    result.__id = '3323'
+    render result as JSON
+  }
 }

@@ -1,18 +1,18 @@
 'use strict';
 
 (function() {
-  var app = angular.module('GOKb',[ 'ui.bootstrap', 
-                                    'ui.grid',    // See http://ui-grid.info/ 'ui.grid.pagination',
-                                    'ui.grid.infiniteScroll',
-                                    'ui.grid.resizeColumns',
-                                    'ui.grid.selection'
-                                    ]);
+  var app = angular.module('Acquisitions',[ 'ui.bootstrap', 
+                                            'ui.grid',    // See http://ui-grid.info/ 'ui.grid.pagination',
+                                            'ui.grid.infiniteScroll',
+                                            'ui.grid.resizeColumns',
+                                            'ui.grid.selection'
+                                            ]);
 
   app.run(function($http) {
     $http.defaults.headers.common.Authorization = 'Basic YWRtaW46YWRtaW4='
   });
 
-  app.controller('GOKbCtrl', ['$scope', '$http', '$log', '$location', 'gokbService', function($scope,$http,$log,$location,gokbService) {
+  app.controller('AcqCollectionsCtrl', ['$scope', '$http', '$log', '$location', 'oleService', function($scope,$http,$log,$location,oleService) {
 
     $scope.qparams = {};
     $scope.gridOptions = {};
@@ -28,25 +28,18 @@
     $scope.search = function() {
       $log.debug("search %o",$scope.qparams);
       $scope.gridOptions.data = [];
-      gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope)
+      oleService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope)
     }
  
     $scope.gridOptions.columnDefs = [
-      {name:'Package Name', field:'packageName',enableColumnResizing: true },
-      {name:'Global Status', field:'globalStatus',enableColumnResizing: true },
-      {name:'Local Status', field:'localStatus', enableColumnResizing: true },
-      {name:'Primary Platform', field:'primaryPlatform',enableColumnResizing: true },
-      {name:'Primary Platform Provider', field:'primaryPlatformProvider',enableColumnResizing: true },
-      {name:'# Titles', field:'numTitles',enableColumnResizing: true },
-      {name:'Date Created', field:'createdDate',enableColumnResizing: true },
-      {name:'Date Updated', field:'lastModifiedDate',enableColumnResizing: true }
+      {name:'Collection Name', field:'title',enableColumnResizing: true },
     ];
 
     var pageno=0;
     var total = 1000;
 
     $scope.gridOptions.data = [];
-    gokbService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope);
+    oleService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
@@ -55,7 +48,7 @@
 
         $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
 
-        gokbService.getPackages($scope.gridOptions.data, gridApi, $scope.qparams, $scope);
+        oleService.getPackages($scope.gridOptions.data, gridApi, $scope.qparams, $scope);
         ++pageno;
         gridApi.infiniteScroll.dataLoaded();
       });
@@ -69,27 +62,20 @@
 
     };
 
-    $scope.ingestPackage = function() {
-      $log.debug("ingest %o",$scope.selectedPackage);
-      var params = {pkg:'112233'};
-      gokbService.materialisePackage(params,$scope,$location)
-      // $location.path('/GOKb/ingest/'+$scope.selectedPackage.__id);
-    }
- 
   }]);
 
-  app.controller('GOKbIngestCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'gokbService', 
-                                   function($scope,$http,$log,$location,$routeParams,gokbService) {
+  app.controller('AcqCollectionCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'oleService', 
+                                   function($scope,$http,$log,$location,$routeParams,oleService) {
 
     $scope.model = {
-      packageId: $routeParams.packageId
+      collectionId: $routeParams.collectionId
     };
 
-    gokbService.retrieve({cls:'hello',id:'220'}, $scope);
+    oleService.retrieve({cls:'hello',id:'220'}, $scope);
 
   }]);
 
-  app.factory('gokbService', ['$http', '$log', function($http, $log) {
+  app.factory('oleService', ['$http', '$log', function($http, $log) {
     // var urlBase = 'http://192.168.2.69:8080/olelite/api';
     var urlBase = 'http://localhost:8080/olelite/api';
     // var urlBase = 'https://gokb.k-int.com/gokb/api';
@@ -99,7 +85,7 @@
       $log.debug("getPackages tgt.length:%i",tgt.length);
 
       qparams.offset = tgt.length;
-      qparams.tmpl='packages';
+      qparams.tmpl='collections';
       qparams.max='25';
 
       $http.get(urlBase+'/search', { params : qparams } ).
@@ -126,18 +112,7 @@
       $log.debug("retrieve...");
       $http.get(urlBase+'/retrieve', { params : qparams } ).
         success(function(data,status,headers,config) {
-          $log.debug("Got response: %o",data);
-        }).
-        error(function(data,status,headers,config) {
-          $log.debug("Error");
-        });
-    };
-
-    dataFactory.materialisePackage = function (qparams, scope, $location) {
-      $http.get(urlBase+'/materialisePackage', { params : qparams } ).
-        success(function(data,status,headers,config) {
-          $log.debug("Got response: %o, redirecting",data);
-          $location.path('/acquisitions/collections'); // +$scope.selectedPackage.__id);
+          log.debug("Got response: %o",data);
         }).
         error(function(data,status,headers,config) {
           $log.debug("Error");
