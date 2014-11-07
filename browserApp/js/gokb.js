@@ -83,6 +83,8 @@
       packageId: $routeParams.packageId
     };
 
+    gokbService.retrieve({cls:'hello',id:'220'}, $scope);
+
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
@@ -116,6 +118,17 @@
 
       return {}
 
+    };
+
+    dataFactory.retrieve = function (qparams, scope) {
+      $log.debug("retrieve...");
+      $http.get(urlBase+'/retrieve', { params : qparams } ).
+        success(function(data,status,headers,config) {
+          log.debug("Got response: %o",data);
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
     };
 
     return dataFactory;

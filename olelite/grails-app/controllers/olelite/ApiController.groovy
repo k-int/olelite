@@ -63,6 +63,12 @@ class ApiController {
     render result as JSON
   }
 
+  def retrieve() {
+    log.debug("retrieve ${params}");
+    def result = [:]
+    result.testVar = 'XYZ';
+    render result as JSON
+  }
 
   def private doQuery (qbetemplate, params, result) {
     log.debug("doQuery ${result}");
