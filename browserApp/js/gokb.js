@@ -12,7 +12,7 @@
     $http.defaults.headers.common.Authorization = 'Basic YWRtaW46YWRtaW4='
   });
 
-  app.controller('GOKbCtrl', ['$scope', '$http', '$log', 'gokbService', function($scope,$http,$log,gokbService) {
+  app.controller('GOKbCtrl', ['$scope', '$http', '$log', '$location', 'gokbService', function($scope,$http,$log,$location,gokbService) {
 
     $scope.qparams = {};
     $scope.gridOptions = {};
@@ -68,7 +68,15 @@
       });
 
     };
+
+    $scope.ingestPackage = function() {
+      $log.debug("ingest %o",$scope.selectedPackage);
+      $location.path('/GOKb/ingest/'+$scope.selectedPackage.__id);
+    }
  
+  }]);
+
+  app.controller('GOKbIngestCtrl', ['$scope', '$http', '$log', 'gokbService', function($scope,$http,$log,gokbService) {
   }]);
 
   app.factory('gokbService', ['$http', '$log', function($http, $log) {
