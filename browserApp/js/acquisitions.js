@@ -32,7 +32,11 @@
     }
  
     $scope.gridOptions.columnDefs = [
-      {name:'Collection Name', field:'title',enableColumnResizing: true },
+      {name:'Collection Name', 
+       field:'title',
+       enableColumnResizing: true ,
+       cellTemplate: '<a href="/browserApp/#/acquisitions/collections/{{row.entity.__id}}">{{row.entity.title}}</a>'
+       },
     ];
 
     var pageno=0;
@@ -71,7 +75,7 @@
       collectionId: $routeParams.collectionId
     };
 
-    oleService.retrieve({cls:'hello',id:'220'}, $scope);
+    oleService.retrieve({oid:'olelite.EResourceRecord:'+$routeParams.collectionId}, $scope);
 
   }]);
 
@@ -112,7 +116,8 @@
       $log.debug("retrieve...");
       $http.get(urlBase+'/retrieve', { params : qparams } ).
         success(function(data,status,headers,config) {
-          log.debug("Got response: %o",data);
+          $log.debug("Got response: %o",data);
+          scope.model.rec = data
         }).
         error(function(data,status,headers,config) {
           $log.debug("Error");

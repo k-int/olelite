@@ -65,8 +65,7 @@ class ApiController {
 
   def retrieve() {
     log.debug("retrieve ${params}");
-    def result = [:]
-    result.testVar = 'XYZ';
+    def result = genericOIDService.resolveOID(params.oid)
     render result as JSON
   }
 
