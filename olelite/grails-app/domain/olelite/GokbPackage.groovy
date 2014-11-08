@@ -23,6 +23,9 @@ class GokbPackage {
   Date createdDate
   Date lastModifiedDate
 
+  // Done this to avoid modifying the OLE tables - ideally 1:m between this and ERR
+  // EResourceRecord eres
+
   static constraints = {
     version(max:new BigDecimal(99999999.0),scale:0)
     numTitles(max:new BigDecimal(99999999.0),scale:0)
@@ -33,6 +36,7 @@ class GokbPackage {
     primaryPlatformProvider(nullable:true, blank:true)
     createdDate(nullable:true, blank:false)
     lastModifiedDate(nullable:true, blank:false)
+    // eres(nullable:true, blank:false)
   }
 
   static mapping = {
@@ -56,6 +60,7 @@ class GokbPackage {
     primaryPlatformProvider column:'PRIMARY_PLAT_PROV'
     createdDate column:'DATE_CREATED'
     lastModifiedDate column:'LAST_UPDATED'
+    // eres column:'ERES_FK'
   }
 
   def setContent(byte[] bytes) {

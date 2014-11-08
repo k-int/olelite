@@ -80,7 +80,34 @@ class ApiController {
   def materialisePackage() {
     log.debug("materialisePackage ${params}");
     def result = [:]
-    result.__id = '3323'
+    result.status="ERROR"
+    if ( params.pkgid ) {
+      def gokb_pkg_to_materialise = GokbPackage.get(params.pkgid)
+      log.debug("pkg : ${gokb_pkg_to_materialise}");
+      if ( gokb_pkg_to_materialise ) {
+        def new_eres = new EResourceRecord();
+        new_eres.id = "${gokb_pkg_to_materialise.id}";
+        new_eres.title = gokb_pkg_to_materialise.packageName;
+        new_eres.pkg = gokb_pkg_to_materialise.objId
+        log.debug("Save: ${new_eres}");
+
+        if ( new_eres.validate() ) {
+          if ( new_eres.save(flush:true) ) {
+            new_eres.save(flush:true)
+            result.status = 'OK'
+            result.__id = new_eres.id;
+          }
+          else {
+            log.error("problem saving new eres");
+            new_eres.errors.each { 
+              log.error(it);
+            }
+          }
+        }
+
+        log.debug("new eres: ${result}");
+      }
+    }
     render result as JSON
   }
 }

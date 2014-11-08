@@ -71,7 +71,7 @@
 
     $scope.ingestPackage = function() {
       $log.debug("ingest %o",$scope.selectedPackage);
-      var params = {pkg:'112233'};
+      var params = {pkgid:$scope.selectedPackage.__id};
       gokbService.materialisePackage(params,$scope,$location)
       // $location.path('/GOKb/ingest/'+$scope.selectedPackage.__id);
     }

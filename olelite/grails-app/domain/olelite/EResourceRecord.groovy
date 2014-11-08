@@ -7,10 +7,24 @@ class EResourceRecord {
   String description
   String isbn
   BigDecimal version
+  // GokbPackage pkg
+  String pkg
 
   static constraints = {
     version(max:new BigDecimal(99999999.0),scale:0)
+    title(nullable:false, blank:false)
+    description(nullable:true, blank:true)
+    isbn(nullable:true, blank:true)
+    pkg(nullable:true)
   }
+
+  // static hasOne = [
+  //   pkg:GokbPackage
+  // ]
+
+  // static mappedBy = [
+  //   pkg:'eres'
+  // ]
 
   static mapping = {
     table 'ole_e_res_rec_t'
@@ -19,7 +33,8 @@ class EResourceRecord {
     // Consider --    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100]
     // id generator:'assigned', column:'E_RES_REC_ID'
     // seqhilo
-    id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100], column:'E_RES_REC_ID'
+    // id generator: 'hilo', params: [table: 'ole_e_res_rec_s', column: 'id', max_lo: 100], column:'E_RES_REC_ID'
+    id generator: 'assigned', column:'E_RES_REC_ID'
     title column:'TITLE'
     description column:'DESCR'
     isbn column:'ISBN', length:100
@@ -29,7 +44,8 @@ class EResourceRecord {
     // | TITLE             | varchar(100) | YES  |     | NULL    |       |
     // | DESCR             | varchar(800) | YES  |     | NULL    |       |
     // | PUBHR             | varchar(500) | YES  |     | NULL    |       |
-    // | GOKB_ID           | varchar(100) | YES  |     | NULL    |       |
+    // Worked around this a bit
+    pkg column:'GOKB_ID'
     // | ISBN              | varchar(100) | YES  |     | NULL    |       |
     // | STAT_ID           | varchar(40)  | YES  | MUL | NULL    |       |
     // | STAT_DT           | varchar(40)  | YES  |     | NULL    |       |
