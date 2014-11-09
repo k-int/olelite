@@ -5,13 +5,21 @@
   <div class="panel-body">
     
     <div class="container-fluid">
-      <form class="form-horizontal" role="form">
 
         <div class="row">
-           Acquisition: {{model}}
+          <div class="col-sm-12">
+             Acquisition: {{model}}
+          </div>
         </div>
 
-      </form>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div ui-grid="gridOptions" class="grid myGrid" ui-grid-infinite-scroll ui-grid-resize-columns ui-grid-selection></div>
+          </div>
+        </div>
+
     </div>
+
   </div>
 </div>

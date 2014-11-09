@@ -22,6 +22,16 @@ class GokbTipp {
   String gokbTitleId
   String gokbPlatformId
   String gokbPlatformName
+  // String status
+  // String type
+
+  static hasMany = [
+    instances : EResourceInstanceTippJoin
+  ]
+
+  static mappedBy = [
+    instances : 'tipp'
+  ]
 
   Date createdDate
   Date lastModifiedDate

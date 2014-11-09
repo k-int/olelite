@@ -77,6 +77,54 @@
 
     oleService.retrieve({oid:'olelite.EResourceRecord:'+$routeParams.collectionId}, $scope);
 
+    $scope.qparams = {};
+    $scope.gridOptions = {};
+    $scope.gridOptions.multiSelect=false;
+    $scope.gridOptions.enableRowSelection=true;
+    $scope.gridOptions.enableSelectAll=false;
+    $scope.searchStatus = ''
+    $scope.selectedPackage = null;
+
+    // $scope.gridOptions.infiniteScrollPercentage = 20;
+    // $scope.gridOptions.infiniteScroll = 20;
+
+    $scope.gridOptions.columnDefs = [
+      {name:'Collection Name',
+       field:'title',
+       enableColumnResizing: true ,
+       cellTemplate: '<a href="/browserApp/#/acquisitions/collections/{{row.entity.__id}}">{{row.entity.title}}</a>'
+       },
+    ];
+
+    var pageno=0;
+    var total = 1000;
+
+    $scope.gridOptions.data = [];
+    oleService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope);
+
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+      $scope.gridApi = gridApi;
+
+      gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
+
+        $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
+
+        oleService.getTipps($scope.gridOptions.data, gridApi, $scope.qparams, $scope);
+        ++pageno;
+        gridApi.infiniteScroll.dataLoaded();
+      });
+
+      gridApi.selection.on.rowSelectionChanged($scope,function(row){
+        $log.debug("Selected row: %o",row);
+        if ( row && row.entity ) {
+          $scope.selectedPackage = row.entity;
+        }
+      });
+
+    };
+
+
+
   }]);
 
   app.factory('oleService', ['$http', '$log', function($http, $log) {
@@ -111,6 +159,34 @@
       return {}
 
     };
+
+    dataFactory.getTipps = function (tgt, gridApi, qparams, scope) {
+      $log.debug("getTipps tgt.length:%i",tgt.length);
+
+      qparams.offset = tgt.length;
+      qparams.tmpl='collections';
+      qparams.max='25';
+
+      $http.get(urlBase+'/search', { params : qparams } ).
+        success(function(data,status,headers,config) {
+          scope.searchStatus = 'Search found '+data.reccount+' records';
+
+          $log.debug("result: %o",data);
+          for (var i = 0; i < data.rows.length; i++) {
+            // $log.debug("Adding row %d : %o", i, data.rows[i]);
+            tgt.push(data.rows[i]);
+            if ( gridApi )
+              gridApi.infiniteScroll.dataLoaded();
+          }
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
+
+      return {}
+
+    };
+
 
     dataFactory.retrieve = function (qparams, scope) {
       $log.debug("retrieve...");
