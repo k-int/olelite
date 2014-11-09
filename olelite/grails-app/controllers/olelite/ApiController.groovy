@@ -115,7 +115,7 @@ class ApiController {
     result.rows = []
 
     def qr = GokbTipp.executeQuery('''
-select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, i.eresInst.id
+select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, t.gokbTitle, i.eresInst.id
 from GokbTipp t left outer join t.instances as i with i.eresInst.id = :errid,
      EResourceRecord err 
 where err.id = :errid 
@@ -132,7 +132,8 @@ where err.id = :errid
                        start:it[5],
                        end:it[6],
                        url:it[7],
-                       eresId:it[8]])
+                       title:it[8],
+                       eresId:it[9]])
     }
 
     render result as JSON

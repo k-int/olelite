@@ -78,6 +78,7 @@
     oleService.retrieve({oid:'olelite.EResourceRecord:'+$routeParams.collectionId}, $scope);
 
     $scope.qparams = {};
+    $scope.qparams.eresid = $routeParams.collectionId;
     $scope.gridOptions = {};
     $scope.gridOptions.multiSelect=false;
     $scope.gridOptions.enableRowSelection=true;
@@ -100,7 +101,7 @@
     var total = 1000;
 
     $scope.gridOptions.data = [];
-    oleService.getPackages($scope.gridOptions.data, null, $scope.qparams, $scope);
+    oleService.getTipps($scope.gridOptions.data, null, $scope.qparams, $scope);
 
     $scope.gridOptions.onRegisterApi = function (gridApi) {
       $scope.gridApi = gridApi;
@@ -164,10 +165,10 @@
       $log.debug("getTipps tgt.length:%i",tgt.length);
 
       qparams.offset = tgt.length;
-      qparams.tmpl='collections';
       qparams.max='25';
 
-      $http.get(urlBase+'/search', { params : qparams } ).
+      // http://localhost:8080/olelite/api/getTipps?eresid=150
+      $http.get(urlBase+'/getTipps', { params : qparams } ).
         success(function(data,status,headers,config) {
           scope.searchStatus = 'Search found '+data.reccount+' records';
 

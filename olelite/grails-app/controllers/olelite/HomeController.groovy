@@ -8,7 +8,13 @@ class HomeController {
   }
 
   def triggerSync() {
-     GOKbSyncService.packageSync();
+    try {
+      GOKbSyncService.packageSync();
+    }
+    catch ( Exception e )  {
+      log.error("problem",e)
+    }
+    redirect(action:'index');
   }
 
   def createTest() {

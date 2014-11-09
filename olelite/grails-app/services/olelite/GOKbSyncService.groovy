@@ -27,13 +27,14 @@ class GOKbSyncService {
 
 
 
-    log.debug("onNewTipp (ctx=${ctx})");
+    // log.debug("onNewTipp (ctx=${ctx})");
     def new_tipp = new GokbTipp()
     new_tipp.objId = java.util.UUID.randomUUID().toString()
     new_tipp.isbn = getIdentifierValue(tipp_record.title.identifiers,'isbn');
     new_tipp.issn = getIdentifierValue(tipp_record.title.identifiers,'issn');
     new_tipp.eissn = getIdentifierValue(tipp_record.title.identifiers,'eissn');
     new_tipp.doi = getIdentifierValue(tipp_record.title.identifiers,'doi');
+    new_tipp.gokbTitle = tipp_record.title.name
     new_tipp.pkg = ctx.pkg;
     new_tipp.accessUrl = tipp_record.title.url;
 
@@ -54,19 +55,19 @@ class GOKbSyncService {
   }
 
   def onUpdatedTipp = { ctx, new_tipp_record, original_tipp_record, tipp_diff, auto_accept ->
-    log.debug("onUpdatedTipp (ctx=${ctx})");
+    // log.debug("onUpdatedTipp (ctx=${ctx})");
   }
 
   def onDeletedTipp = { ctx, tipp_record, auto_accept ->
-    log.debug("onDeletedTipp (ctx=${ctx})");
+    // log.debug("onDeletedTipp (ctx=${ctx})");
   }
 
   def onPkgPropChange = { ctx, property, value, auto_accept ->
-    log.debug("onPkgPropChange (ctx=${ctx})");
+    // log.debug("onPkgPropChange (ctx=${ctx})");
   }
 
   def onTippUnchanged = { ctx, tipp_record ->
-    log.debug("onTippUnchanged (ctx=${ctx})");
+    // log.debug("onTippUnchanged (ctx=${ctx})");
   }
 
   def packageSync() {
@@ -82,9 +83,9 @@ class GOKbSyncService {
 
     oai_client.getChangesSince(date, 'gokb') { rec ->
       GokbPackage.withNewTransaction { status ->
-        log.debug("Process..");
+        // log.debug("Process..");
         def package_identifier = rec.header.identifier.text();
-        log.debug("Got OAI Record ${package_identifier} datestamp: ${rec.header.datestamp}");
+        // log.debug("Got OAI Record ${package_identifier} datestamp: ${rec.header.datestamp}");
   
   
         def newpkg = packageConv(rec.metadata)
@@ -94,7 +95,7 @@ class GOKbSyncService {
   
         // Step 1 : See if we can locate an existing record for this package - If we can, then this is an update
         // If we can't then this is a new package...
-        log.debug("looking up package by identifier: ${package_identifier}");
+        // log.debug("looking up package by identifier: ${package_identifier}");
   
         def package_record = GokbPackage.findByPackageIdentifier(package_identifier)
   

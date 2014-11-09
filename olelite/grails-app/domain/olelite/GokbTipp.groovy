@@ -20,6 +20,7 @@ class GokbTipp {
   String coverageDepth
   String coverageNote
   String gokbTitleId
+  String gokbTitle
   String gokbPlatformId
   String gokbPlatformName
   // String status
@@ -52,6 +53,7 @@ class GokbTipp {
     coverageDepth(nullable:true, blank:true);
     coverageNote(nullable:true, blank:true);
     gokbTitleId(nullable:true, blank:true);
+    gokbTitle(nullable:true, blank:true);
     gokbPlatformId(nullable:true, blank:true);
     gokbPlatformName(nullable:true, blank:true);
     createdDate(nullable:true, blank:false);
@@ -78,6 +80,7 @@ class GokbTipp {
     coverageDepth column:'COV_DEPTH'
     coverageNote column:'COV_NOTE'
     gokbTitleId column:'GOKB_TITLE_ID'
+    gokbTitle column:'GOKB_TITLE'
     gokbPlatformId column:'GOKB_PLATFORM_ID'
     gokbPlatformName column:'GOKB_PLATFORM_NAME'
 
