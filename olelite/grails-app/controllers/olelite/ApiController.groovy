@@ -140,7 +140,9 @@ where err.id = :errid
                        url:it[7],
                        title:it[8],
                        eresId:it[9],
-                       medium:'Journal'
+                       medium:'Journal',
+                       status:'Current',
+                       active:it[9] ? 'Yes' : 'No'
                       ])
     }
 

@@ -17,7 +17,7 @@
     $scope.qparams = {};
     $scope.gridOptions = {};
     $scope.gridOptions.multiSelect=false;
-    $scope.gridOptions.enableRowSelection=true;
+    $scope.gridOptions.enableRowSelection=false;
     $scope.gridOptions.enableSelectAll=false;
     $scope.searchStatus = ''
     $scope.selectedPackage = null;
@@ -57,12 +57,13 @@
         gridApi.infiniteScroll.dataLoaded();
       });
 
-      gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        $log.debug("Selected row: %o",row);
-        if ( row && row.entity ) {
-          $scope.selectedPackage = row.entity;
-        }
-      });
+      // gridApi.selection.on.rowSelectionChanged($scope,function(row){
+      //   $log.debug("Selected row: %o",row);
+      //   if ( row && row.entity ) {
+      //     $scope.selectedPackage = row.entity;
+      //   }
+      // });
+
 
     };
 
@@ -80,11 +81,12 @@
     $scope.qparams = {};
     $scope.qparams.eresid = $routeParams.collectionId;
     $scope.gridOptions = {};
-    $scope.gridOptions.multiSelect=false;
+    $scope.gridOptions.multiSelect=true;
     $scope.gridOptions.enableRowSelection=true;
     $scope.gridOptions.enableSelectAll=false;
     $scope.searchStatus = ''
-    $scope.selectedPackage = null;
+    $scope.numSelected=0
+    $scope.selectedTipps = []
 
     // $scope.gridOptions.infiniteScrollPercentage = 20;
     // $scope.gridOptions.infiniteScroll = 20;
@@ -93,8 +95,9 @@
       {name:'Title',
        field:'title',
        enableColumnResizing: true ,
-       cellTemplate: '<a href="/browserApp/#/acquisitions/collections/{{row.entity.__id}}">{{row.entity.title}}</a>'
+       // cellTemplate: '<a href="/browserApp/#/acquisitions/collections/{{row.entity.__id}}">{{row.entity.title}}</a>'
        },
+       {name:'Active', field:'active', enableColumnResizing: true},
        {name:'Global status', field:'status', enableColumnResizing: true},
        {name:'Type', field:'medium', enableColumnResizing: true},
        {name:'ISBN', field:'isbn', enableColumnResizing: true},
@@ -125,12 +128,23 @@
       });
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        $log.debug("Selected row: %o",row);
-        if ( row && row.entity ) {
-          $scope.selectedPackage = row.entity;
+        $log.debug("select row %o",row);
+        if (row.isSelected) {
+          $scope.numSelected++
+          $scope.selectedTipps.push(row.entity.id);
+        }
+        else {
+          $scope.numSelected--
+          var index = $scope.selectedTipps.indexOf(row.entity.id);
+          $scope.selectedTipps.splice(index, 1);
         }
       });
 
+
+    };
+
+    $scope.ingestTipps = function() {
+      
     };
 
 
