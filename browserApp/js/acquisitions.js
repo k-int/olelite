@@ -128,7 +128,6 @@
       });
 
       gridApi.selection.on.rowSelectionChanged($scope,function(row){
-        $log.debug("select row %o",row);
         if (row.isSelected) {
           $scope.numSelected++
           $scope.selectedTipps.push(row.entity.id);
@@ -144,7 +143,11 @@
     };
 
     $scope.ingestTipps = function() {
-      
+      // Ingest tipps
+      var params = {}
+      params.parentResource = $scope.model.collectionId;
+      params.tippIds = $scope.selectedTipps;
+      oleService.createResourceInstances(params, $scope);
     };
 
 
@@ -208,8 +211,20 @@
         });
 
       return {}
-
     };
+
+    dataFactory.createResourceInstances = function (qparams, scope) {
+      $http.post(urlBase+'/createResourceInstances', qparams).
+        success(function(data,status,headers,config) {
+          $log.debug("OK");
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
+
+      return {}
+    };
+
 
 
     dataFactory.retrieve = function (qparams, scope) {

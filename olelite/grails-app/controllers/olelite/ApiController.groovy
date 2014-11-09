@@ -114,11 +114,12 @@ class ApiController {
     def result = [:]
     def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     result.rows = []
+    def p = EResourceRecord.get(params.eresid);
 
     def qr = GokbTipp.executeQuery('''
-select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, t.gokbTitle, i.eresInst.id,
+select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, t.gokbTitle, t,
        t.coverageStartVolume, t.coverageStartIssue, t.coverageEndVolume, t.coverageEndIssue
-from GokbTipp t left outer join t.instances as i with i.eresInst.id = :errid,
+from GokbTipp t,
      EResourceRecord err 
 where err.id = :errid 
   and err.pkg = t.pkg.objId
@@ -128,6 +129,12 @@ where err.id = :errid
 
       def start = ( it[5] ? sdf.format(it[5]) : '' ) + ( it[10] ? " / v:${it[10]}" : '' ) + ( it[11] ? " / i:${it[11]}" : '' )
       def end = ( it[6] ? sdf.format(it[6]) : '' ) + ( it[12] ? " / v:${it[12]}" : '' ) + ( it[13] ? " / i:${it[13]}" : '' )
+
+      log.debug(it[9].instances)
+      def er = null;
+      if ( it[9].instances.size() > 0 ) {
+        er = it[9].instances[0].eresInst.id
+      }
 
       result.rows.add([
                        id:it[0],
@@ -139,13 +146,67 @@ where err.id = :errid
                        end:end,
                        url:it[7],
                        title:it[8],
-                       eresId:it[9],
+                       eresId:er,
                        medium:'Journal',
                        status:'Current',
-                       active:it[9] ? 'Yes' : 'No'
+                       active:er ? 'Yes' : 'No'
                       ])
     }
 
+    render result as JSON
+  }
+
+  def createResourceInstances() {
+    log.debug("createResourceInstances()");
+    log.debug(request.JSON);
+
+    if ( request.JSON?.parentResource ) {
+      def p = EResourceRecord.get(request.JSON.parentResource)
+      if ( p ) {
+        log.debug("looked up err: ${p}");
+        request.JSON?.tippIds?.each {  tippid ->
+
+          def related_tipp = GokbTipp.get(tippid)
+          if ( related_tipp ) {
+            log.debug("Got GOKB Tipp, Create EResourceRecordInstance");
+            def new_eres_inst = new EResourceRecordInstance()
+            new_eres_inst.id = java.util.UUID.randomUUID().toString().substring(26);
+            new_eres_inst.objId = java.util.UUID.randomUUID().toString()
+            new_eres_inst.parent = p;
+            new_eres_inst.isbn = related_tipp.isbn ?: related_tipp.issn ?: related_tipp.eissn
+            new_eres_inst.platform = 'Test platform';
+            new_eres_inst.publisher = 'Test publisher';
+
+            new_eres_inst.coverageStartDate = related_tipp.coverageStartDate;
+            new_eres_inst.coverageStartVolume = related_tipp.coverageStartVolume;
+            new_eres_inst.coverageStartIssue = related_tipp.coverageStartIssue;
+            new_eres_inst.coverageEndDate = related_tipp.coverageEndDate;
+            new_eres_inst.coverageEndVolume = related_tipp.coverageEndVolume;
+            new_eres_inst.coverageEndIssue = related_tipp.coverageEndIssue;
+
+            new_eres_inst.accessStartDate = related_tipp.coverageStartDate;
+            new_eres_inst.accessStartVolume = related_tipp.coverageStartVolume;
+            new_eres_inst.accessStartIssue = related_tipp.coverageStartIssue;
+            new_eres_inst.accessEndDate = related_tipp.coverageEndDate;
+            new_eres_inst.accessEndVolume = related_tipp.coverageEndVolume;
+            new_eres_inst.accessEndIssue = related_tipp.coverageEndIssue;
+
+            if ( new_eres_inst.save(flush:true, failOnError:true) ) {
+              log.debug("created new new_eres_inst with id ${new_eres_inst.id}");
+              def link = new EResourceInstanceTippJoin(tipp:related_tipp,eresInst:new_eres_inst).save(flush:true, failOnError:true)
+            }
+            else {
+              log.debug("failed to create");
+              new_eres_inst.errors.each { 
+                log.error(it);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    def result = [:]
     render result as JSON
   }
 }
