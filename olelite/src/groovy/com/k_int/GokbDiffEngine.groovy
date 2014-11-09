@@ -60,13 +60,13 @@ public class GokbDiffEngine {
         tippb = bi.hasNext() ? bi.next() : null
       }
       else if ( ( tippb != null ) && ( tippa == null ) ) {
-        System.out.println("Title "+tippb+" Was added to the package");
+        // System.out.println("Title "+tippb+" Was added to the package");
         newTippClosure(ctx, tippb, auto_accept)
         tippb = bi.hasNext() ? bi.next() : null;
       }
       else {
         deletedTippClosure(ctx, tippa, auto_accept)
-        System.out.println("Title "+tippa+" Was removed from the package");
+        // System.out.println("Title "+tippa+" Was removed from the package");
         tippa = ai.hasNext() ? ai.next() : null;
       }
     }

@@ -112,10 +112,12 @@ class ApiController {
 
   def getTipps() {
     def result = [:]
+    def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     result.rows = []
 
     def qr = GokbTipp.executeQuery('''
-select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, t.gokbTitle, i.eresInst.id
+select t.id, t.isbn, t.issn, t.eissn, t.doi , t.coverageStartDate, t.coverageEndDate, t.accessUrl, t.gokbTitle, i.eresInst.id,
+       t.coverageStartVolume, t.coverageStartIssue, t.coverageEndVolume, t.coverageEndIssue
 from GokbTipp t left outer join t.instances as i with i.eresInst.id = :errid,
      EResourceRecord err 
 where err.id = :errid 
@@ -123,17 +125,23 @@ where err.id = :errid
 ''', [errid:params.eresid], [max:3000]);
 
     qr.each {
+
+      def start = ( it[5] ? sdf.format(it[5]) : '' ) + ( it[10] ? " / v:${it[10]}" : '' ) + ( it[11] ? " / i:${it[11]}" : '' )
+      def end = ( it[6] ? sdf.format(it[6]) : '' ) + ( it[12] ? " / v:${it[12]}" : '' ) + ( it[13] ? " / i:${it[13]}" : '' )
+
       result.rows.add([
                        id:it[0],
                        isbn:it[1],
                        issn:it[2],
                        eissn:it[3],
                        doi:it[4],
-                       start:it[5],
-                       end:it[6],
+                       start:start,
+                       end:end,
                        url:it[7],
                        title:it[8],
-                       eresId:it[9]])
+                       eresId:it[9],
+                       medium:'Journal'
+                      ])
     }
 
     render result as JSON

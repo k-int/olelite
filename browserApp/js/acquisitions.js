@@ -90,11 +90,20 @@
     // $scope.gridOptions.infiniteScroll = 20;
 
     $scope.gridOptions.columnDefs = [
-      {name:'Collection Name',
+      {name:'Title',
        field:'title',
        enableColumnResizing: true ,
        cellTemplate: '<a href="/browserApp/#/acquisitions/collections/{{row.entity.__id}}">{{row.entity.title}}</a>'
        },
+       {name:'Global status', field:'status', enableColumnResizing: true},
+       {name:'Type', field:'medium', enableColumnResizing: true},
+       {name:'ISBN', field:'isbn', enableColumnResizing: true},
+       {name:'ISSN', field:'issn', enableColumnResizing: true},
+       {name:'eISSN', field:'eissn', enableColumnResizing: true},
+       {name:'DOI', field:'doi', enableColumnResizing: true},
+       {name:'Start', field:'start', enableColumnResizing: true},
+       {name:'End', field:'end', enableColumnResizing: true},
+       {name:'Url', field:'url', enableColumnResizing: true},
     ];
 
     var pageno=0;
