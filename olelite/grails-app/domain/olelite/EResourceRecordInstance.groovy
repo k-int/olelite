@@ -25,6 +25,21 @@ class EResourceRecordInstance {
 
   static constraints = {
     version(max:new BigDecimal(99999999),scale:0)
+    isbn(nullable:true, blank:true)
+    platform(nullable:true, blank:true)
+    publisher(nullable:true, blank:true)
+    coverageStartDate(nullable:true, blank:true)
+    coverageStartVolume(nullable:true, blank:true)
+    coverageStartIssue(nullable:true, blank:true)
+    coverageEndDate(nullable:true, blank:true)
+    coverageEndVolume(nullable:true, blank:true)
+    coverageEndIssue(nullable:true, blank:true)
+    accessStartDate(nullable:true, blank:true)
+    accessStartVolume(nullable:true, blank:true)
+    accessStartIssue(nullable:true, blank:true)
+    accessEndDate(nullable:true, blank:true)
+    accessEndVolume(nullable:true, blank:true)
+    accessEndIssue(nullable:true, blank:true)
   }
 
   static mapping = {

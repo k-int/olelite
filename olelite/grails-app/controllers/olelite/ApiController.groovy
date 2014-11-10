@@ -112,6 +112,9 @@ class ApiController {
 
   def getTipps() {
     def result = [:]
+    result.max = params.max ? Integer.parseInt(params.max) : 100
+    result.offset = params.offset ? Integer.parseInt(params.offset) : 0;
+
     def sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
     result.rows = []
     def p = EResourceRecord.get(params.eresid);
@@ -123,7 +126,7 @@ from GokbTipp t,
      EResourceRecord err 
 where err.id = :errid 
   and err.pkg = t.pkg.objId
-''', [errid:params.eresid], [max:3000]);
+''', [errid:params.eresid], [max:result.max,offset:result.offset]);
 
     qr.each {
 
