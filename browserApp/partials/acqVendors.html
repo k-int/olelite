@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">OLE Acquisitions :: Search Vendors</h3>
+  </div>
+  <div class="panel-body">
+    
+    <div class="container-fluid">
+      <form class="form-horizontal" role="form">
+        <div class="row">
+    
+          <div class="col-sm-12">
+            <div class="container-fluid"><div class="row">
+              <div class="form-group form-group-sm ">
+              <label class="col-sm-3 control-label" for="name">Vendor Name</label>
+                <div class="col-sm-9"><input type="text" name="name" class="form-control input-lg" ng-model="qparams.qp_name"/></div>
+              </div>
+              <div class="form-group form-group-sm">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-9">
+                  <button ng-click="search()" class="btn btn-success">Search</button>
+                  {{searchStatus}}
+                </div>
+              </div>
+
+            </div></div>
+          </div>
+    
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12">
+            <div ui-grid="gridOptions" class="grid myGrid" ui-grid-infinite-scroll ui-grid-resize-columns ></div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

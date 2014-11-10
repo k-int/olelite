@@ -191,6 +191,29 @@ globalSearchTemplates = [
       ]
     ]
   ],
+  'vendors':[
+    baseclass:'olelite.Vendor',
+    title:'Vendors',
+    group:'Primary',
+    qbeConfig:[
+      // For querying over associations and joins, here we will need to set up scopes to be referenced in the qbeForm config
+      // Until we need them tho, they are omitted. qbeForm entries with no explicit scope are at the root object.
+      qbeForm:[
+        [
+          prompt:'Name',
+          qparam:'qp_name',
+          placeholder:'Name of package',
+          contextTree:['ctxtp':'qry', 'comparator' : 'ilike', 'prop':'name']
+        ],
+      ],
+      qbeGlobals:[
+      ],
+      qbeResults:[
+        [heading:'Name', property:'name'],
+      ]
+    ]
+  ],
+
 
 ]
 

@@ -212,4 +212,22 @@ where err.id = :errid
     def result = [:]
     render result as JSON
   }
+
+  def createVendor() {
+    log.debug("createVendor ${params}");
+    def result = [:]
+
+    def new_vendor_header = new VendorHeader(objId:java.util.UUID.randomUUID().toString()).save(flush:true, failOnError:true)
+    def new_vendor = new Vendor(  
+                                name:params.vendorName,  
+                                active:'Y',  
+                                objId:java.util.UUID.randomUUID().toString(),   
+                                collectTax:'Y',
+                                header:new_vendor_header)
+    log.debug("Assigning identifier: ${new_vendor_header.id}");
+
+    new_vendor.id = new_vendor_header.id
+    new_vendor.save(flush:true, failOnError:true);
+    render result as JSON
+  }
 }

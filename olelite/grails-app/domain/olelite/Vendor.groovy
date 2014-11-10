@@ -8,6 +8,7 @@ class Vendor {
   String active
   String collectTax
   BigDecimal version
+  VendorHeader header
 
   static constraints = {
     id(max:new BigDecimal(99999999.0),scale:0)
@@ -28,7 +29,11 @@ class Vendor {
 
 
     // | VNDR_HDR_GNRTD_ID      | decimal(10,0) | NO   | PRI | 0       |       |
-    id generator: 'hilo', params: [table: 'pur_vndr_dtl_t', column: 'VNDR_HDR_GNRTD_ID', max_lo: 100], column:'VNDR_HDR_GNRTD_ID'
+    // id generator: 'hilo', params: [table: 'pur_vndr_dtl_t', column: 'VNDR_HDR_GNRTD_ID', max_lo: 100], column:'VNDR_HDR_GNRTD_ID'
+    // id generator: 'increment', column:'VNDR_HDR_GNRTD_ID'
+    id generator: 'assigned', column:'VNDR_HDR_GNRTD_ID'
+    
+    header column:'VNDR_HDR_GNRTD_ID', insertable: false, updateable: false
     // | VNDR_DTL_ASND_ID       | decimal(10,0) | NO   | PRI | 0       |       |
     // | OBJ_ID                 | varchar(36)   | NO   | UNI | NULL    |       |
     objId column:'OBJ_ID'

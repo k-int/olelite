@@ -154,6 +154,66 @@
 
   }]);
 
+
+  app.controller('AcqVendorsCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'oleService', 
+                                   function($scope,$http,$log,$location,$routeParams,oleService) {
+
+    $scope.qparams = {};
+    $scope.gridOptions = {};
+    $scope.gridOptions.multiSelect=false;
+    $scope.gridOptions.enableRowSelection=true;
+    $scope.gridOptions.enableSelectAll=false;
+    $scope.searchStatus = ''
+    $scope.selectedPackage = null;
+
+    // $scope.gridOptions.infiniteScrollPercentage = 20;
+    // $scope.gridOptions.infiniteScroll = 20;
+
+    $scope.search = function() {
+      $log.debug("search %o",$scope.qparams);
+      $scope.gridOptions.data = [];
+      gokbService.search($scope.gridOptions.data, null, $scope.qparams, $scope)
+    }
+
+    $scope.gridOptions.columnDefs = [
+      {name:'Vendor Name', field:'name',enableColumnResizing: true },
+    ];
+
+    var pageno=0;
+    var total = 1000;
+
+    $scope.gridOptions.data = [];
+    oleService.search($scope.gridOptions.data, null, $scope.qparams, $scope);
+
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+      $scope.gridApi = gridApi;
+
+      gridApi.infiniteScroll.on.needLoadMoreData($scope,function(){
+
+        $log.debug("gridApi.infiniteScroll.on.needLoadMoreData");
+
+        oleService.search($scope.gridOptions.data, gridApi, $scope.qparams, $scope);
+        ++pageno;
+        gridApi.infiniteScroll.dataLoaded();
+      });
+
+    };
+
+  }]);
+
+
+  app.controller('AcqVendorCtrl', ['$scope', '$http', '$log', '$location', '$routeParams', 'oleService', 
+                                   function($scope,$http,$log,$location,$routeParams,oleService) {
+
+    $scope.createVendor = function() {
+      $log.debug("Create vendor ctrl "+$scope.vendorName);
+      oleService.createVendor($scope);
+    }
+
+    
+  }]);
+
+
   app.factory('oleService', ['$http', '$log', function($http, $log) {
     // var urlBase = 'http://192.168.2.69:8080/olelite/api';
     var urlBase = 'http://localhost:8080/olelite/api';
@@ -225,6 +285,32 @@
       return {}
     };
 
+    dataFactory.search = function (tgt, gridApi, qparams, scope) {
+      $log.debug("search tgt.length:%i",tgt.length);
+
+      qparams.offset = tgt.length;
+      qparams.tmpl='vendors';
+      qparams.max='25';
+
+      $http.get(urlBase+'/search', { params : qparams } ).
+        success(function(data,status,headers,config) {
+          scope.searchStatus = 'Search found '+data.reccount+' records';
+
+          $log.debug("result: %o",data);
+          for (var i = 0; i < data.rows.length; i++) {
+            // $log.debug("Adding row %d : %o", i, data.rows[i]);
+            tgt.push(data.rows[i]);
+            if ( gridApi )
+              gridApi.infiniteScroll.dataLoaded();
+          }
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
+
+      return {}
+
+    };
 
 
     dataFactory.retrieve = function (qparams, scope) {
@@ -238,6 +324,20 @@
           $log.debug("Error");
         });
     };
+
+    dataFactory.createVendor = function (scope) {
+      $log.debug("dataFactory.createVendor..."+scope.vendorName);
+      var qparams = { vendorName: scope.vendorName };
+      $http.get(urlBase+'/createVendor', { params : qparams } ).
+        success(function(data,status,headers,config) {
+          $log.debug("Got response: %o",data);
+        }).
+        error(function(data,status,headers,config) {
+          $log.debug("Error");
+        });
+    };
+
+
 
     return dataFactory;
   }]);
